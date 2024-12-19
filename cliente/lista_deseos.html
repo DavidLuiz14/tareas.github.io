@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Deseos</title>
+    <link rel="stylesheet" href="../styles/modulos.css">
+</head>
+<body>
+    <header>
+        <h1>Lista de Deseos</h1>
+        <nav>
+            <a href="dashboard_cliente.php">Volver al Menú Principal</a>
+        </nav>
+    </header>
+    <main>
+        <section class="lista-deseos-lista">
+            <h2>Productos en la Lista de Deseos</h2>
+            <?php if (!empty($lista_deseos)): ?>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Precio</th>
+                            <th>Fecha Agregado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($lista_deseos as $item): ?>
+                            <tr>
+                                <td><?= $item['nombre_producto'] ?></td>
+                                <td>$<?= $item['precio_venta'] ?></td>
+                                <td><?= $item['fecha_agregado'] ?></td>
+                                <td>
+                                    <a href="lista_deseos.php?accion=eliminar&id_deseo=<?= $item['id_deseo'] ?>" onclick="return confirm('¿Estás seguro de que deseas eliminar este producto de la lista de deseos?')">Eliminar</a> | 
+
+                                    <a href="lista_deseos.php?accion=agregar_carrito&id_producto=<?= $item['id_producto'] ?>">Agregar al Carrito</a>
+
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php else: ?>
+                <p>Tu lista de deseos está vacía.</p>
+            <?php endif; ?>
+        </section>
+
+        <section class="lista-deseos-agregar">
+            <h2>Agregar Producto a la Lista de Deseos</h2>
+            <form method="POST" action="lista_deseos.php">
+                <label for="id_producto">Producto:</label>
+                <select name="id_producto" id="id_producto" required>
+                    <?php foreach ($productos as $producto): ?>
+                        <option value="<?= $producto['id_producto'] ?>">
+                            <?= $producto['nombre_producto'] ?> ($<?= $producto['precio_venta'] ?>)
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <button type="submit" name="accion" value="agregar">Agregar a la Lista de Deseos</button>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

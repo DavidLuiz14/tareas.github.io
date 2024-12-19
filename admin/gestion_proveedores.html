@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Proveedores</title>
+    <link rel="stylesheet" href="../styles/modulos.css">
+</head> 
+<body>
+    <header>
+        <h1>Gestión de Proveedores</h1>
+        <nav>
+            <a href="dashboard_admin.php">Volver al Menú Principal</a>
+        </nav>
+    </header>
+    <main> 
+        <section class="form-section">
+            <h2><?= isset($proveedor) ? 'Editar Proveedor' : 'Agregar Proveedor' ?></h2>
+            <form method="POST" action="gestion_proveedores.php">
+                <input type="hidden" name="id_proveedor" value="<?= isset($proveedor) ? $proveedor['id_proveedor'] : '' ?>">
+
+                <label for="nombre_completo">Nombre Completo:</label>
+                <input type="text" name="nombre_completo" id="nombre_completo" value="<?= isset($proveedor) ? $proveedor['nombre_completo'] : '' ?>" required>
+
+                <label for="telefono">Teléfono:</label>
+                <input type="text" name="telefono" id="telefono" value="<?= isset($proveedor) ? $proveedor['telefono'] : '' ?>" maxlength="10" pattern="[0-9]{10}" required>
+
+                <label for="correo">Correo:</label>
+                <input type="email" name="correo" id="correo" value="<?= isset($proveedor) ? $proveedor['correo'] : '' ?>" required>
+
+                <label for="direccion">Dirección:</label>
+                <input type="text" name="direccion" id="direccion" value="<?= isset($proveedor) ? $proveedor['direccion'] : '' ?>" required>
+
+                <label for="nif">NIF (opcional):</label>
+                <input type="text" name="nif" id="nif" maxlength="13" pattern="[A-Za-z0-9]{1,13}" value="<?= isset($proveedor) ? $proveedor['nif'] : '' ?>" title="Solo se permiten letras y números, hasta 13 caracteres">
+
+                <!-- Botones separados para agregar y editar -->
+                <?php if (isset($proveedor)): ?>
+                    <button type="submit" name="accion" value="editar">Editar</button>
+                <?php else: ?>
+                    <button type="submit" name="accion" value="agregar">Agregar</button>
+                <?php endif; ?>
+            </form>
+        </section>
+
+        <section class="table-section">
+            <h2>Proveedores</h2>
+            <form action="gestion_proveedores.php" method="GET">
+                <input type="text" name="filtro_nombre" placeholder="Filtrar por nombre" value="<?= isset($filtro_nombre) ? $filtro_nombre : '' ?>" />
+                <button type="submit" name="accion" value="filtrar">Filtrar</button>
+            </form>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre Completo</th>
+                        <th>Teléfono</th>
+                        <th>Correo</th>
+                        <th>Dirección</th>
+                        <th>NIF</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($proveedores as $proveedor): ?>
+                        <tr>
+                            <td><?= $proveedor['id_proveedor'] ?></td>
+                            <td><?= $proveedor['nombre_completo'] ?></td>
+                            <td><?= $proveedor['telefono'] ?></td>
+                            <td><?= $proveedor['correo'] ?></td>
+                            <td><?= $proveedor['direccion'] ?></td>
+                            <td><?= $proveedor['nif'] ?></td>
+                            <td>
+                                <a href="gestion_proveedores.php?edit=<?= $proveedor['id_proveedor']; ?>">Editar</a>
+                                <a href="gestion_proveedores.php?delete=<?= $proveedor['id_proveedor']; ?>" onclick="return confirm('¿Estás seguro de eliminar este proveedor?')">Eliminar</a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </section>
+    </main>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Productos</title>
+    <link rel="stylesheet" href="../styles/modulos.css">
+</head>
+<body> 
+    <header>
+        <h1>Gestión de Productos</h1>
+        <nav>
+            <a href="dashboard_admin.php">Volver al Menú Principal</a>
+        </nav>
+    </header> 
+    <main>
+        <section class="form-section">
+            <h2><?= isset($producto) ? 'Editar Producto' : 'Agregar Producto' ?></h2>
+            <form method="POST" action="productos.php">
+                <input type="hidden" name="id_producto" value="<?= isset($producto) ? $producto['id_producto'] : '' ?>">
+
+                <label for="nombre_producto">Nombre del Producto:</label>
+                <input type="text" id="nombre_producto" name="nombre_producto" value="<?= isset($producto) ? $producto['nombre_producto'] : '' ?>" required>
+
+                <label for="tipo_producto">Tipo de Producto:</label>
+                <input type="text" id="tipo_producto" name="tipo_producto" value="<?= isset($producto) ? $producto['tipo_producto'] : '' ?>" required>
+
+                <label for="descripcion">Descripción del Producto:</label>
+                <textarea id="descripcion" name="descripcion" required><?= isset($producto) ? $producto['descripcion'] : '' ?></textarea>
+
+                <label for="precio_compra">Precio de Compra:</label>
+                <input type="number" id="precio_compra" name="precio_compra" step="0.01" value="<?= isset($producto) ? $producto['precio_compra'] : '' ?>" required>
+
+                <label for="precio_venta">Precio de Venta:</label>
+                <input type="number" id="precio_venta" name="precio_venta" step="0.01" value="<?= isset($producto) ? $producto['precio_venta'] : '' ?>" required>
+
+                <label for="stock_actual">Stock Actual:</label>
+                <input type="number" id="stock_actual" name="stock_actual" value="<?= isset($producto) ? $producto['stock_actual'] : '' ?>" required>
+
+                <label for="stock_minimo">Stock Mínimo:</label>
+                <input type="number" id="stock_minimo" name="stock_minimo" value="<?= isset($producto) ? $producto['stock_minimo'] : '' ?>" required>
+
+                <!-- Botones separados para agregar y editar -->
+                <?php if (isset($producto)): ?>
+                    <button type="submit" name="accion" value="editar">Editar</button>
+                <?php else: ?>
+                    <button type="submit" name="accion" value="agregar">Agregar</button>
+                <?php endif; ?>
+            </form>
+        </section>
+        <section class="table-section">
+            <h2>Inventario</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Tipo</th>
+                        <th>Descripción</th>
+                        <th>Precio Compra</th>
+                        <th>Precio Venta</th>
+                        <th>Stock Actual</th>
+                        <th>Stock Mínimo</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($productos as $producto): ?>
+                        <tr>
+                            <td><?= $producto['id_producto'] ?></td>
+                            <td><?= $producto['nombre_producto'] ?></td>
+                            <td><?= $producto['tipo_producto'] ?></td>
+                            <td><?= $producto['descripcion'] ?></td>
+                            <td><?= $producto['precio_compra'] ?></td>
+                            <td><?= $producto['precio_venta'] ?></td>
+                            <td><?= $producto['stock_actual'] ?></td>
+                            <td><?= $producto['stock_minimo'] ?></td>
+                            <td>
+                                <a href="productos.php?edit=<?= $producto['id_producto']; ?>">Editar</a>
+                                <a href="productos.php?delete=<?= $producto['id_producto']; ?>" onclick="return confirm('¿Estás seguro de eliminar este producto?')">Eliminar</a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </section>
+    </main>
+</body>
+</html>

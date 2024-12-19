@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras</title>
+    <link rel="stylesheet" href="../styles/modulos.css">
+</head>
+<body>
+    <header>
+        <h1>Carrito de Compras</h1>
+        <nav>
+            <a href="dashboard_cliente.php">Volver al Menú Principal</a>
+        </nav>
+    </header>
+    <main>
+        <section class="carrito-lista">
+            <h2>Productos en el Carrito</h2>
+            <?php if (!empty($carrito)): ?>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Precio Unitario</th>
+                            <th>Cantidad</th>
+                            <th>Subtotal</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($carrito as $item): ?>
+                            <tr>
+                                <td><?= $item['nombre_producto'] ?></td>
+                                <td>$<?= $item['precio_venta'] ?></td>
+                                <td>
+                                    <form method="POST" action="carrito.php">
+                                        <input type="number" name="cantidad" value="<?= $item['cantidad'] ?>" min="1" required>
+                                        <input type="hidden" name="id_carrito" value="<?= $item['id_carrito'] ?>">
+                                        <button type="submit" name="accion" value="editar">Actualizar</button>
+                                    </form>
+                                </td>
+                                <td>$<?= $item['subtotal'] ?></td>
+                                <td>
+                                    <a href="carrito.php?accion=eliminar&id_carrito=<?= $item['id_carrito'] ?>" onclick="return confirm('¿Estás seguro de que deseas eliminar este producto del carrito?')">Eliminar</a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table> 
+                <p><strong>Total del Carrito:</strong> $<?= $total ?></p>
+                
+                <!-- Botón para convertir carrito en pedido -->
+                <form method="POST" action="carrito.php">
+                    <button type="submit" name="accion" value="convertir_a_pedido">Convertir a Pedido</button>
+                </form>
+
+            <?php else: ?>
+                <p>Tu carrito está vacío.</p>
+            <?php endif; ?>
+        </section>
+
+        <section class="carrito-agregar">
+            <h2>Agregar Producto al Carrito</h2>
+            <form method="POST" action="carrito.php">
+                <label for="id_producto">Producto:</label>
+                <select name="id_producto" id="id_producto" required>
+                    <?php foreach ($productos as $producto): ?>
+                        <option value="<?= $producto['id_producto'] ?>">
+                            <?= $producto['nombre_producto'] ?> ($<?= $producto['precio_venta'] ?>)
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <label for="cantidad">Cantidad:</label>
+                <input type="number" name="cantidad" id="cantidad" min="1" required>
+                <button type="submit" name="accion" value="agregar">Agregar al Carrito</button>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Ventas</title>
+    <link rel="stylesheet" href="../styles/modulos.css">
+</head>
+<body>
+    <header> 
+        <h1>Registro de Ventas</h1>
+        <nav>
+            <a href="dashboard_admin.php">Volver al Menú Principal</a>
+        </nav>
+    </header>
+      
+    <main>
+        <section class="form-section">
+            <h2>Registrar Venta</h2>
+            <form action="ventas.php" method="POST">
+                <label for="id_producto">Producto:</label>
+                <select name="id_producto" id="id_producto" required onchange="actualizarPrecio()">
+                    <?php
+                        require('../conexion.php');
+                        $productos = $conn->query("SELECT id_producto, nombre_producto FROM productos");
+                        while ($producto = $productos->fetch_assoc()) {
+                            echo "<option value='" . $producto['id_producto'] . "'>" . $producto['nombre_producto'] . "</option>";
+                        }
+                    ?>
+                </select><br><br>
+
+                <label for="id_cliente">Cliente:</label>
+                <select name="id_cliente" id="id_cliente" required>
+                    <?php
+                        $clientes = $conn->query("SELECT id_cliente, nombre_completo FROM clientes");
+                        while ($cliente = $clientes->fetch_assoc()) {
+                            echo "<option value='" . $cliente['id_cliente'] . "'>" . $cliente['nombre_completo'] . "</option>";
+                        }
+                    ?>
+                </select><br><br>
+
+                <label for="cantidad">Cantidad:</label>
+                <input type="number" name="cantidad" id="cantidad" required min="1"><br><br>
+
+                <label for="total">Total:</label>
+                <input type="number" name="total" id="total" readonly><br><br>
+
+                <label for="fecha_venta">Fecha de Venta:</label>
+                <input type="date" name="fecha_venta" id="fecha_venta" required><br><br>
+
+                <button type="submit">Registrar Venta</button>
+            </form>
+        </section>
+
+        <section class="table-section">
+            <h2>Lista de Ventas Realizadas</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID Venta</th>
+                        <th>Producto</th>
+                        <th>Cliente</th>
+                        <th>Cantidad</th>
+                        <th>Total</th>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                        $ventasQuery = $conn->query("SELECT v.id_venta, p.nombre_producto, c.nombre_completo AS cliente, v.cantidad, v.total, v.fecha_venta
+                                                     FROM ventas v
+                                                     JOIN productos p ON v.id_producto = p.id_producto
+                                                     JOIN clientes c ON v.id_cliente = c.id_cliente");
+
+                        while ($venta = $ventasQuery->fetch_assoc()) {
+                            echo "<tr>";
+                            echo "<td>" . $venta['id_venta'] . "</td>";
+                            echo "<td>" . $venta['nombre_producto'] . "</td>";
+                            echo "<td>" . $venta['cliente'] . "</td>";
+                            echo "<td>" . $venta['cantidad'] . "</td>";
+                            echo "<td>" . $venta['total'] . "</td>";
+                            echo "<td>" . $venta['fecha_venta'] . "</td>";
+                            echo "<td><a href='ventas.php?generar_factura=" . $venta['id_venta'] . "'>Generar Factura</a></td>";
+                            echo "</tr>";
+                        }
+                    ?>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <script>
+        // Función para actualizar el precio al seleccionar un producto
+        function actualizarPrecio() {
+            const productoId = document.getElementById('id_producto').value;
+            fetch(`obtener_precio.php?id_producto=${productoId}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('precio_venta').value = data.precio_venta;
+                    calcularTotal();
+                });
+        }
+
+        // Función para calcular el total al ingresar la cantidad
+        function calcularTotal() {
+            const cantidad = parseFloat(document.getElementById('cantidad').value);
+            const precioVenta = parseFloat(document.getElementById('precio_venta').value);
+            if (cantidad && precioVenta) {
+                document.getElementById('total').value = cantidad * precioVenta;
+            }
+        }
+
+        actualizarPrecio();
+    </script>
+</body>
+</html>

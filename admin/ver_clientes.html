@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Clientes</title>
+    <link rel="stylesheet" href="../styles/modulos.css">
+</head>
+<body>
+    <header>
+        <h1>Gestión de Clientes</h1>
+        <nav>
+            <a href="dashboard_admin.php">Volver al Menú Principal</a>
+        </nav>
+    </header>
+    <main>
+        <section class="form-section">
+            <?php if (isset($cliente)): ?>
+                <h2>Editar Cliente</h2>
+                <form method="POST" action="ver_clientes.php">
+                    <input type="hidden" name="id_cliente" value="<?= $cliente['id_cliente'] ?>">
+
+                    <label for="nombre_completo">Nombre Completo:</label>
+                    <input type="text" name="nombre_completo" id="nombre_completo" value="<?= $cliente['nombre_completo'] ?>" required>
+
+                    <label for="telefono">Teléfono:</label>
+                    <input type="text" name="telefono" id="telefono" value="<?= $cliente['telefono'] ?>" maxlength="10" pattern="[0-9]{10}" required>
+
+                    <label for="correo">Correo:</label>
+                    <input type="email" name="correo" id="correo" value="<?= $cliente['correo'] ?>" required>
+
+                    <label for="direccion">Dirección:</label>
+                    <input type="text" name="direccion" id="direccion" value="<?= $cliente['direccion'] ?>" required>
+
+                    <label for="nif">NIF (opcional):</label>
+                    <input type="text" name="nif" id="nif" maxlength="13" pattern="[A-Za-z0-9]{1,13}" value="<?= $cliente['nif'] ?>" title="Solo se permiten letras y números, hasta 13 caracteres">
+
+                    <button type="submit" name="accion" value="editar">Editar</button>
+                </form>
+            <?php endif; ?>
+        </section>
+
+        <section class="table-section">
+            <h2>Lista de Clientes</h2>
+            <form action="ver_clientes.php" method="GET">
+                <input type="text" name="filtro_nombre" placeholder="Filtrar por nombre" value="<?= $filtro_nombre ?? '' ?>">
+                <button type="submit" name="accion" value="filtrar">Filtrar</button>
+            </form>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre Completo</th>
+                        <th>Teléfono</th>
+                        <th>Correo</th>
+                        <th>Dirección</th>
+                        <th>NIF</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($clientes as $cliente): ?>
+                        <tr>
+                            <td><?= $cliente['id_cliente'] ?></td>
+                            <td><?= $cliente['nombre_completo'] ?></td>
+                            <td><?= $cliente['telefono'] ?></td>
+                            <td><?= $cliente['correo'] ?></td>
+                            <td><?= $cliente['direccion'] ?></td>
+                            <td><?= $cliente['nif'] ?></td>
+                            <td>
+                                <a href="ver_clientes.php?edit=<?= $cliente['id_cliente'] ?>">Editar</a>
+                                <a href="ver_clientes.php?delete=<?= $cliente['id_cliente'] ?>" onclick="return confirm('¿Estás seguro de eliminar este cliente?')">Eliminar</a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </section>
+    </main>
+</body>
+</html>

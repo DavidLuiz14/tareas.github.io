@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Perfil</title>
+    <link rel="stylesheet" href="../styles/modulos.css">
+</head>
+<body>
+    <header>
+        <h1>Gestión de Perfil</h1>
+        <nav>
+            <a href="dashboard_cliente.php">Volver al Menú Principal</a>
+        </nav>
+    </header>
+    <main>
+        <section class="form-section">
+            <h2>Editar Perfil</h2>
+            <form method="POST" action="perfil.php">
+                <label for="nombre_completo">Nombre Completo:</label>
+                <input type="text" name="nombre_completo" id="nombre_completo" value="<?= $cliente['nombre_completo'] ?>" required>
+
+                <label for="telefono">Teléfono:</label>
+                <input type="text" name="telefono" id="telefono" value="<?= $cliente['telefono'] ?>" maxlength="10" pattern="[0-9]{10}" required>
+
+                <label for="correo">Correo:</label>
+                <input type="email" name="correo" id="correo" value="<?= $cliente['correo'] ?>" required>
+
+                <label for="direccion">Dirección:</label>
+                <input type="text" name="direccion" id="direccion" value="<?= $cliente['direccion'] ?>" required>
+
+                <label for="nif">NIF (opcional):</label>
+                <input type="text" name="nif" id="nif" maxlength="13" pattern="[A-Za-z0-9]{1,13}" value="<?= $cliente['nif'] ?>" title="Solo se permiten letras y números, hasta 13 caracteres">
+
+                <button type="submit" name="accion" value="editar">Guardar Cambios</button>
+            </form>
+        </section>
+
+        <section class="form-section">
+            <h2>Eliminar Cuenta</h2>
+            <form method="POST" action="perfil.php" onsubmit="return confirm('¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.')">
+                <button type="submit" name="accion" value="eliminar">Eliminar Cuenta</button>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

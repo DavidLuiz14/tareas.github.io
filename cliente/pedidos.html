@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Pedidos</title>
+    <link rel="stylesheet" href="../styles/modulos.css">
+</head>
+<body>
+    <header>
+        <h1>Gestión de Pedidos</h1>
+        <nav>
+            <a href="dashboard_cliente.php">Volver al Menú Principal</a>
+        </nav>
+    </header>
+    <main>
+        <section class="pedido-lista">
+            <h2>Mis Pedidos</h2>
+            <?php if (!empty($pedidos)): ?>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID Pedido</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>Total</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($pedidos as $pedido): ?>
+                            <tr>
+                                <td><?= $pedido['id_pedido'] ?></td>
+                                <td><?= $pedido['fecha_pedido'] ?></td>
+                                <td><?= $pedido['estado'] ?></td>
+                                <td>$<?= $pedido['total'] ?></td>
+                                <td>
+                                    <a href="pedidos.php?accion=ver&id_pedido=<?= $pedido['id_pedido'] ?>">Ver Detalles</a> |
+                                    <a href="pedidos.php?accion=eliminar&id_pedido=<?= $pedido['id_pedido'] ?>" onclick="return confirm('¿Estás seguro de que deseas eliminar este pedido?')">Eliminar</a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table> 
+            <?php else: ?>
+                <p>No tienes pedidos registrados.</p>
+            <?php endif; ?>
+        </section>
+    </main>
+</body>
+</html>

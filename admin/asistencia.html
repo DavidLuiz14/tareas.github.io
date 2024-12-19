@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Asistencias</title>
+    <link rel="stylesheet" href="../styles/modulos.css">
+</head>
+<body> 
+    <header>
+        <h1>Gestión de Asistencias</h1>
+        <nav>
+            <a href="dashboard_admin.php">Volver al Menú Principal</a>
+            <a href="trabajadores.php">Gestionar Trabajadores</a>
+        </nav>
+    </header>
+    <main>
+        <section class="form-section">
+            <h2><?= isset($asistencia) ? 'Editar Asistencia' : 'Registrar Asistencia' ?></h2>
+            <form method="POST" action="asistencia.php">
+                <input type="hidden" name="id_asistencia" value="<?= isset($asistencia) ? $asistencia['id_asistencia'] : '' ?>">
+
+                <label for="id_trabajador">Trabajador:</label>
+                <select id="id_trabajador" name="id_trabajador" required>
+                    <?php foreach ($trabajadores as $trabajador): ?>
+                        <option value="<?= $trabajador['id_trabajador'] ?>" <?= isset($asistencia) && $asistencia['id_trabajador'] === $trabajador['id_trabajador'] ? 'selected' : '' ?>>
+                            <?= $trabajador['nombre_completo'] ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+
+                <label for="fecha">Fecha:</label>
+                <input type="date" id="fecha" name="fecha" value="<?= isset($asistencia) ? $asistencia['fecha'] : '' ?>" required>
+
+                <label for="hora_llegada">Hora de Llegada:</label>
+                <input type="time" id="hora_llegada" name="hora_llegada" value="<?= isset($asistencia) ? $asistencia['hora_llegada'] : '' ?>" required>
+
+                <label for="hora_salida">Hora de Salida:</label>
+                <input type="time" id="hora_salida" name="hora_salida" value="<?= isset($asistencia) ? $asistencia['hora_salida'] : '' ?>">
+
+                <button type="submit" name="accion" value="<?= isset($asistencia) ? 'editar' : 'registrar' ?>">
+                    <?= isset($asistencia) ? 'Editar' : 'Registrar' ?>
+                </button>
+            </form>
+        </section>
+        <section class="table-section">
+            <h2>Listado de Asistencias</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Trabajador</th>
+                        <th>Fecha</th>
+                        <th>Hora de Llegada</th>
+                        <th>Hora de Salida</th>
+                        <th>Horas Trabajadas</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($asistencias as $asistencia): ?>
+                        <tr>
+                            <td><?= $asistencia['id_asistencia'] ?></td>
+                            <td><?= $asistencia['nombre_trabajador'] ?></td>
+                            <td><?= $asistencia['fecha'] ?></td>
+                            <td><?= $asistencia['hora_llegada'] ?></td>
+                            <td><?= $asistencia['hora_salida'] ?></td>
+                            <td><?= $asistencia['horas_trabajadas'] ?></td>
+                            <td>
+                                <a href="asistencia.php?edit=<?= $asistencia['id_asistencia']; ?>">Editar</a>
+                                <a href="asistencia.php?delete=<?= $asistencia['id_asistencia']; ?>" onclick="return confirm('¿Estás seguro de eliminar esta asistencia?')">Eliminar</a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </section>
+    </main>
+</body>
+</html>

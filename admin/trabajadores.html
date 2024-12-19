@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Trabajadores</title>
+    <link rel="stylesheet" href="../styles/modulos.css">
+</head>
+<body> 
+    <header>
+        <h1>Gestión de Trabajadores</h1>
+        <nav>
+            <a href="dashboard_admin.php">Volver al Menú Principal</a>
+            <a href="asistencia.php">Gestionar Asistencia</a>
+        </nav>
+    </header> 
+    <main>
+        <section class="form-section">
+            <h2><?= isset($trabajador) ? 'Editar Trabajador' : 'Agregar Trabajador' ?></h2>
+            <form method="POST" action="trabajadores.php">
+                <input type="hidden" name="id_trabajador" value="<?= isset($trabajador) ? $trabajador['id_trabajador'] : '' ?>">
+
+                <label for="nombre_completo">Nombre Completo:</label>
+                <input type="text" id="nombre_completo" name="nombre_completo" value="<?= isset($trabajador) ? $trabajador['nombre_completo'] : '' ?>" required>
+
+                <label for="telefono">Teléfono:</label>
+                <input type="tel" id="telefono" name="telefono" value="<?= isset($trabajador) ? $trabajador['telefono'] : '' ?>" required maxlength="10" pattern="\d{10}" title="Debe contener solo 10 números" oninput="this.value = this.value.replace(/\D/g, '').slice(0, 10);">
+
+
+                <label for="direccion">Dirección:</label>
+                <input type="text" id="direccion" name="direccion" value="<?= isset($trabajador) ? $trabajador['direccion'] : '' ?>" required>
+
+                <label for="puesto">Puesto:</label>
+                <select id="puesto" name="puesto" required>
+                    <option value="Administrador" <?= isset($trabajador) && $trabajador['puesto'] === 'Administrador' ? 'selected' : '' ?>>Administrador</option>
+                    <option value="vendedor" <?= isset($trabajador) && $trabajador['puesto'] === 'vendedor' ? 'selected' : '' ?>>vendedor</option>
+                    <option value="cajero" <?= isset($trabajador) && $trabajador['puesto'] === 'cajero' ? 'selected' : '' ?>>cajero</option>
+                </select>
+
+                <label for="dias_trabajados">Días Trabajados:</label>
+                <input type="number" id="dias_trabajados" name="dias_trabajados" value="<?= isset($trabajador) ? $trabajador['dias_trabajados'] : '' ?>" required>
+
+                <label for="salario_base">Salario Base:</label>
+                <input type="number" id="salario_base" name="salario_base" step="0.01" value="<?= isset($trabajador) ? $trabajador['salario_base'] : '100.00' ?>" required>
+
+                <?php if (isset($trabajador)): ?>
+                    <button type="submit" name="accion" value="editar">Editar</button>
+                <?php else: ?>
+                    <button type="submit" name="accion" value="agregar">Agregar</button>
+                <?php endif; ?>
+            </form>
+        </section>
+        <section class="table-section">
+            <h2>Lista de Trabajadores</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Teléfono</th>
+                        <th>Dirección</th>
+                        <th>Puesto</th>
+                        <th>Días Trabajados</th>
+                        <th>Salario Base</th>
+                        <th>Fecha Registro</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($trabajadores as $trabajador): ?>
+                        <tr>
+                            <td><?= $trabajador['id_trabajador'] ?></td>
+                            <td><?= $trabajador['nombre_completo'] ?></td>
+                            <td><?= $trabajador['telefono'] ?></td>
+                            <td><?= $trabajador['direccion'] ?></td>
+                            <td><?= $trabajador['puesto'] ?></td>
+                            <td><?= $trabajador['dias_trabajados'] ?></td>
+                            <td><?= $trabajador['salario_base'] ?></td>
+                            <td><?= $trabajador['fecha_registro'] ?></td> 
+                            <td>
+                                <a href="trabajadores.php?edit=<?= $trabajador['id_trabajador']; ?>">Editar</a>
+                                <a href="trabajadores.php?delete=<?= $trabajador['id_trabajador']; ?>" onclick="return confirm('¿Estás seguro de eliminar este trabajador?')">Eliminar</a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </section>
+        
+    </main>
+</body>
+</html>

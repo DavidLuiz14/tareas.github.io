@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedidos</title>
+    <link rel="stylesheet" href="../styles/modulos.css">
+</head>
+<body>
+    <header> 
+        <h1>Gestión de Pedidos</h1>
+        <nav>
+            <a href="dashboard_admin.php">Volver al Menú Principal</a>
+        </nav>
+    </header>
+      
+    <main>
+        <section class="table-section">
+            <h2>Lista de Pedidos Realizados</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID Pedido</th>
+                        <th>Cliente</th>
+                        <th>Total</th>
+                        <th>Estado</th>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                        require('../conexion.php');
+                        
+                        // Consulta para obtener todos los pedidos
+                        $pedidosQuery = $conn->query("SELECT p.id_pedido, c.nombre_completo AS cliente, p.total, p.estado, p.fecha_pedido
+                                                      FROM pedidos p
+                                                      JOIN clientes c ON p.id_cliente = c.id_cliente");
+
+                        while ($pedido = $pedidosQuery->fetch_assoc()) {
+                            echo "<tr>";
+                            echo "<td>" . $pedido['id_pedido'] . "</td>";
+                            echo "<td>" . $pedido['cliente'] . "</td>";
+                            echo "<td>" . $pedido['total'] . "</td>";
+                            echo "<td><form action='ver_pedidos.php' method='POST'>";
+                            if ($pedido['estado'] === 'pagado') {
+                                echo "<select name='estado' disabled>";
+                            } else {
+                                echo "<select name='estado' onchange='this.form.submit()'>";
+                            }
+                            echo "<option value='" . $pedido['estado'] . "'>" . $pedido['estado'] . "</option>";
+                            if ($pedido['estado'] !== 'pagado') {
+                                echo "<option value='pendiente'>Pendiente</option>";
+                                echo "<option value='procesado'>Procesado</option>";
+                                echo "<option value='realizado'>Realizado</option>";
+                                echo "<option value='pagado'>Pagado</option>";
+                                echo "<option value='cancelado'>Cancelado</option>";
+                            }
+                            echo "</select>";
+                            echo "<input type='hidden' name='id_pedido' value='" . $pedido['id_pedido'] . "' />";
+                            echo "</form></td>";
+                            echo "<td>" . $pedido['fecha_pedido'] . "</td>";
+                            echo "<td><a href='ver_pedidos.php?ver_detalles=" . $pedido['id_pedido'] . "'>Ver Detalles</a></td>";
+                            echo "</tr>";
+                        }
+                    ?>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Mostrar detalles del pedido -->
+        <?php
+            if (isset($_GET['ver_detalles'])) {
+                $idPedido = $_GET['ver_detalles'];
+                $detalleQuery = $conn->query("SELECT p.id_pedido, c.nombre_completo AS cliente, p.fecha_pedido, p.estado, p.total, 
+                                                    d.cantidad, pr.nombre_producto, d.precio_unitario, d.subtotal 
+                                              FROM detalles_pedido d
+                                              JOIN pedidos p ON d.id_pedido = p.id_pedido
+                                              JOIN productos pr ON d.id_producto = pr.id_producto
+                                              JOIN clientes c ON p.id_cliente = c.id_cliente
+                                              WHERE p.id_pedido = '$idPedido'");
+                
+                if ($detalle = $detalleQuery->fetch_assoc()) {
+                    echo "<section class='detalle-pedido'>";
+                    echo "<h2>Detalles del Pedido</h2>";
+                    echo "<p><strong>ID Pedido:</strong> " . $detalle['id_pedido'] . "</p>";
+                    echo "<p><strong>Cliente:</strong> " . $detalle['cliente'] . "</p>";
+                    echo "<p><strong>Fecha Pedido:</strong> " . $detalle['fecha_pedido'] . "</p>";
+                    echo "<p><strong>Estado:</strong> " . $detalle['estado'] . "</p>";
+                    echo "<p><strong>Total:</strong> " . $detalle['total'] . "</p>";
+                    echo "<h3>Productos:</h3>";
+                    echo "<ul>";
+                    do {
+                        echo "<li>" . $detalle['nombre_producto'] . " - Cantidad: " . $detalle['cantidad'] . " - Precio Unitario: " . $detalle['precio_unitario'] . " - Subtotal: " . $detalle['subtotal'] . "</li>";
+                    } while ($detalle = $detalleQuery->fetch_assoc());
+                    echo "</ul>";
+                    echo "</section>";
+                }
+            }
+        ?>
+    </main>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opiniones</title>
+    <link rel="stylesheet" href="../styles/modulos.css">
+</head>
+<body>
+    <header>
+        <h1>Opiniones</h1>
+        <nav>
+            <a href="dashboard_cliente.php">Volver al Menú Principal</a>
+        </nav>
+    </header>
+    <main>
+        <section class="opiniones-lista">
+            <h2>Lista de Opiniones</h2>
+            <?php if (!empty($opiniones)): ?>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Calificación</th>
+                            <th>Comentario</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($opiniones as $opinion): ?>
+                            <tr>
+                                <td><?= $opinion['nombre_producto'] ?></td>
+                                <td><?= $opinion['calificacion'] ?></td>
+                                <td><?= $opinion['comentario'] ?></td>
+                                <td><?= $opinion['fecha_opinion'] ?></td>
+                                <td>
+                                    <a href="opiniones.php?accion=editar&id_opinion=<?= $opinion['id_opinion'] ?>">Editar</a> | 
+                                    <a href="opiniones.php?accion=eliminar&id_opinion=<?= $opinion['id_opinion'] ?>" onclick="return confirm('¿Estás seguro de que deseas eliminar esta opinión?')">Eliminar</a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php else: ?>
+                <p>No tienes opiniones registradas.</p>
+            <?php endif; ?>
+        </section>
+
+        <section class="opiniones-agregar">
+            <h2>Agregar Opinión</h2>
+            <form method="POST" action="opiniones.php">
+                <label for="id_producto">Producto:</label>
+                <select name="id_producto" id="id_producto" required>
+                    <?php foreach ($productos as $producto): ?>
+                        <option value="<?= $producto['id_producto'] ?>">
+                            <?= $producto['nombre_producto'] ?> ($<?= $producto['precio_venta'] ?>)
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+
+                <label for="calificacion">Calificación (1-5):</label>
+                <input type="number" name="calificacion" id="calificacion" min="1" max="5" required>
+
+                <label for="comentario">Comentario:</label>
+                <textarea name="comentario" id="comentario" rows="4" maxlength="300" required></textarea>
+
+                <button type="submit" name="accion" value="agregar">Agregar Opinión</button>
+            </form>
+        </section>
+
+        <?php if (isset($opinion_editar)): ?>
+        <section class="opiniones-editar">
+            <h2>Editar Opinión</h2>
+            <form method="POST" action="opiniones.php">
+                <input type="hidden" name="id_opinion" value="<?= $opinion_editar['id_opinion'] ?>">
+
+                <label for="calificacion_editar">Calificación (1-5):</label>
+                <input type="number" name="calificacion" id="calificacion_editar" min="1" max="5" value="<?= $opinion_editar['calificacion'] ?>" required>
+
+                <label for="comentario_editar">Comentario:</label>
+                <textarea name="comentario" id="comentario_editar" rows="4" maxlength="300" required><?= $opinion_editar['comentario'] ?></textarea>
+
+                <button type="submit" name="accion" value="actualizar">Actualizar Opinión</button>
+            </form>
+        </section>
+        <?php endif; ?>
+    </main>
+</body>
+</html>
